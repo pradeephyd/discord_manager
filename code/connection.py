@@ -1,7 +1,8 @@
 import time
-
+from code.send_recv import *
 
 class CONNECTION:
+
 	def __init__(self, client, server):
 		self.conn = client[0]
 		self.host = client[1][0]
@@ -9,11 +10,22 @@ class CONNECTION:
 
 		self.times = [client[2], time.time()]
 
-		self.discord = self.server.discord
+		self.discord = server.discord
 
-		self.data = self.server.data
+		self.server = server
 
-		self.discord_data = discord.data
+		#self.data = self.server.data
 
-	def login_discord(self):
-		self.discord.login()
+		#self.discord_data = discord.data
+
+		self.send_recv = SEND_RECV(self.conn)
+
+		self.pr = self.send_recv.pr
+		self.inp = self.send_recv.inp
+
+	def login(self):
+		username = self.inp("Username: ")
+		password = self.inp("Password: ")
+
+	def start(self):
+		self.login()

@@ -1,5 +1,6 @@
 from code import *
 
-d = DATA()
+s = SERVER("192.168.1.92", 5656, MANAGER, DATA)
 
-d.load()
+s.start_server()
+

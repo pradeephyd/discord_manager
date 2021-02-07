@@ -1,17 +1,18 @@
 from code.connection import *
 from threading import Thread as th
 import time
+import socket
 
 class SERVER:
-	def __init__(self, host, port, discord, data):
+	def __init__(self, host, port, DISCORD, DATA):
 		self.host = host
 		self.port = port
 
 		#OBJECT TO CONTROLL DISCORD
-		self.discord = discord
+		self.discord = DISCORD
 
 		#OBJECT TO LOAD AND SAVE DATA
-		self.data = data.DATA()
+		self.data = DATA()
 
 		#SERVER SOCKET
 		self.socket = False
@@ -27,6 +28,7 @@ class SERVER:
 	def start_server(self):
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.socket.bind((self.host, self.port))
+		self.start_listening()
 
 
 	def start_listening(self):
@@ -38,7 +40,7 @@ class SERVER:
 		while True:
 			conn, addr = self.socket.accept()
 			client = [conn, addr, time.time()]
-			waiting_thread = th(target=self.wait, args=client)
+			waiting_thread = th(target=self.wait, args=(client,))
 			waiting_thread.start()
 			self.threads.append(waiting_thread)
 
