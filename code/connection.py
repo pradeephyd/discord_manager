@@ -23,9 +23,9 @@ class CONNECTION:
 		self.pr = self.send_recv.pr
 		self.inp = self.send_recv.inp
 
-	def login(self):
-		username = self.inp("Username: ")
-		password = self.inp("Password: ")
+	def get_log_info(self):
+		self.username = self.inp("Username: ")
+		self.password = self.inp("Password: ")
 
 	def start(self):
-		self.login()
+		self.get_log_info()
