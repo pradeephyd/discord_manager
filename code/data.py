@@ -8,7 +8,7 @@ class DATA:
 		self.file_conf = "config.json"
 
 		self.server = {}
-		self.profiles = {}
+		self.profiles = []
 		self.conf = {}
 
 	def l(self, file_name, default, save):

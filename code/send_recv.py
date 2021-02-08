@@ -1,6 +1,7 @@
 from time import sleep
 import json
 from threading import Thread as th
+import socket
 
 class SEND_RECV:
 	def stop(self):
@@ -68,14 +69,40 @@ class SEND_RECV:
 		if not ret == None:
 			self.send(ret)
 
-	def __init__(self, conn, buffer=2048, pr=print, inp=input):
+	def connect(self):
+		if not self.conn:
+			self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			if self.host and self.port:
+
+				self.conn.connect((self.host, self.port))
+				self.start()
+				return True
+			else:
+				print("Host and port needed to connect")
+				return False
+		else:
+			print("Already connected to host")
+			return False
+
+	def start(self):
+		if not self.listen_thread:
+			self.listen_thread = th(target=self.listen)
+			self.listen_thread.start()
+		else:
+			print("Tried to start thread when its already started")
+
+	def __init__(self, conn=False, host=False, port=False, buffer=2048, pr=print, inp=input):
 		self.conn = conn
+		self.host = host
+		self.port = port
 		self.messages = []
 		self.delay = 0.01
 		self.recv_messages = True
 		self.buffer = buffer
 
 		self.command_decor = "$$$$$$$$$$$$$"
+
+		self.listen_thread = False
 
 		self.send_data_slip_decor = "%%%%%%%%%%%"
 		self.send_data_slip_decor_byte = self.send_data_slip_decor.encode("utf-8")
@@ -87,8 +114,12 @@ class SEND_RECV:
 		["PRINT", self.user_print]
 		]
 
-		self.listen_thread = th(target=self.listen)
+		if self.conn:
+			self.start()
+		else:
+			if self.host and self.port:
+				self.connect()
 
-		self.listen_thread.start()
+
 
 
