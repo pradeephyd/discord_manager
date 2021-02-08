@@ -5,6 +5,7 @@ from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 
 class MANAGER:
 	def open_web(self):
@@ -34,11 +35,41 @@ class MANAGER:
 
 		return self.profile_info, self.cookies
 
-	def get_messages(self):
+	def send_message(self, message):
+		input_ = self.web.find_element_by_xpath(self.chat_input)
+		input_.send_keys(message)
+		input_.send_keys(Keys.ENTER)
+
+
+	def get_name_of_chat_element(self, element):
+		try:
+			return element.find_element_by_css_selector(self.chat_name_css_selector).get_attribute('innerHTML')
+		except:
+			return False
+
+	def go_to_chat(self, chat_name):
+		for c in self.get_chats():
+			if self.get_name_of_chat_element(c) == chat_name:
+				c.click()
+				return True
+		return False
+
+	def get_messages(self, channel):
 		return [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.web, 5).until(EC.visibility_of_all_elements_located((By.XPATH, self.chat_container_xpath)))]
 
 	def get_chats(self):
-		return self.web.find_elements_by_css_selector(self.chat_container_css_selector)
+		chats = []
+		for c in self.web.find_elements_by_css_selector(self.chat_container_css_selector):
+			if not self.get_name_of_chat_element(c) in self.trash_chats:
+				chats.append(c)
+		return chats
+
+	def get_chat_names(self):
+		names = []
+		for c in self.get_chats():
+			names.append(self.get_name_of_chat_element(c))
+		return names
+
 
 	def login(self):
 		self.web.get("https://discord.com/login")
@@ -61,14 +92,26 @@ class MANAGER:
 
 
 
+		self.trash_chats = ["Nitro", "Friends", False]
+
 
 		#ccs selectors
 
 		#container of chats
 
-		self.chat_container_css_selector = '#private-channels > div'
+		self.chat_container_css_selector = '.layout-2DM8Md'
+
+
+		#name
+
+		self.chat_name_css_selector = '.overflow-WK9Ogt'
+
 
 		#xpaths elements
 
 		#container of chats
 		self.chat_container_xpath = '//*[@id="private-channels"]/div'
+
+		#input text
+
+		self.chat_input = '//*[@id="app-mount"]/div[2]/div/div[2]/div/div/div/div[2]/div[2]/div/main/form/div/div/div/div[3]/div[2]'

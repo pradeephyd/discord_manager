@@ -20,9 +20,17 @@ class CONNECTION:
 
 			self.server.save_account(account_info, cookies)
 
-			for i in range(5):
-				self.discord.get_chats()[i].click()
-				time.sleep(3)
+			while True:
+				command = self.inp("Command: ").lower()
+
+				if command == "chats":
+					self.pr(self.discord.get_chat_names())
+				else:
+					if command == "go_to_chat":
+						self.discord.go_to_chat(self.inp("Chat: "))
+					else:
+						if command == "send":
+							self.discord.send_message(self.inp("Message: "))
 
 	def login(self):
 		self.username = self.inp("Username: ")
