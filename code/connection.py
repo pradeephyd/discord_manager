@@ -1,6 +1,5 @@
 import time
 from code.send_recv import *
-from pickle import dumps
 
 class CONNECTION:
 	def get_account_info(self):
@@ -9,15 +8,17 @@ class CONNECTION:
 	def start(self):
 		self.login()
 
-		account_info = self.get_account_info()
+		account_info, cookies = self.get_account_info()
 
 		if account_info:
 
-			self.discord = self.server.discord(account_info)
+			self.discord = self.server.discord(account_info, cookies)
 
 			self.discord.open_web()
 
-			self.discord.login()
+			account_info, cookies = self.discord.load_account()
+
+			self.server.save_account(account_info, cookies)
 
 	def login(self):
 		self.username = self.inp("Username: ")

@@ -1,7 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-import pickle
 
 class MANAGER:
 	def open_web(self):
@@ -17,7 +16,17 @@ class MANAGER:
 
 	def save_cookies(self):
 		self.cookies = self.web.get_cookies()
-		self.profile_info["cookies"] = pickle.dumps(self.cookies)
+
+	def load_account(self):
+		if not self.logged:
+			self.login()
+			self.profile_info["discord"]["logged"] = True
+		else:
+			self.load_cookies()
+			self.web.get("https://discord.com/channels/@me")
+		self.save_cookies()
+
+		return self.profile_info, self.cookies
 
 	def login(self):
 		self.web.get("https://discord.com/login")
@@ -28,9 +37,10 @@ class MANAGER:
 		password_input.send_keys(self.password)
 		submit_input.click()
 
-	def __init__(self, profile_info):
+	def __init__(self, profile_info, cookies):
 		self.profile_info = profile_info
-		self.cookies = pickle.loads(self.profile_info["cookies"])
-		self.email = self.profile_info["email"]
-		self.password = self.profile_info["password"]
+		self.logged = self.profile_info["discord"]["logged"]
+		self.cookies = cookies
+		self.email = self.profile_info["discord"]["email"]
+		self.password = self.profile_info["discord"]["password"]
 		self.web = False

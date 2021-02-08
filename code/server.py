@@ -2,6 +2,7 @@ from code.connection import *
 from threading import Thread as th
 import time
 import socket
+from pickle import dumps
 
 class SERVER:
 	def __init__(self, host, port, DISCORD, DATA):
@@ -14,6 +15,8 @@ class SERVER:
 		#OBJECT TO LOAD AND SAVE DATA
 		self.data = DATA()
 
+		self.data.load()
+
 		#SERVER SOCKET
 		self.socket = False
 
@@ -24,6 +27,13 @@ class SERVER:
 		self.waiting = []
 		self.new_waiting = True
 
+	def get_cookies(self):
+		return self.data.cookies
+
+
+	def save_cookies(self, cookies):
+		self.data.cookies = cookies
+		self.data.save()
 
 	def yn(self, message, pr=print, inp=input):
 		if "y" in inp("{}? Y/n".format(message)).lower():
@@ -32,9 +42,13 @@ class SERVER:
 			return False
 
 	def get_log_info(self, pr=print, inp=input):
-		email = inp("Discord email: ")
-		password = inp("Discord password: ")
-		return {"email":email, "password":password, "cookies":dumps([])}
+		username = inp("Console username: ")
+		password = inp("Console password: ")
+
+		discord_email = inp("Discord email: ")
+		discord_password = inp("Discord password: ")
+
+		return {"discord":{"email":discord_email, "password":discord_password, "logged":False}, "username":username, "password":password}
 
 	def create_new_account(self, pr=print, inp=input):
 		account_info = self.get_log_info(pr=pr, inp=inp)
@@ -43,16 +57,25 @@ class SERVER:
 
 		return account_info
 
-	def save_new_account(self, account_info):
+	def save_account(self, account_info, cookies):
+		self.save_cookies(cookies)
+		for a in self.data.profiles:
+			if a["username"] == account_info["username"]:
+				self.data.profiles[self.data.profiles.index(a)] = account_info
 
+		self.data.save_profiles()
+
+	def save_new_account(self, account_info):
 		self.data.profiles.append(account_info)
+
+		self.data.save_profiles()
 
 	def get_account_info(self, username, password, pr=print, inp=input):
 		for a in self.data.profiles:
 			if a["username"] == username:
 				for i in range(5):
 					if a["password"] == password:
-						return a
+						return a, self.get_cookies()
 					else:
 						pr("Incorrect password")
 						password = input("Retry({}): ".format(i))
@@ -60,9 +83,9 @@ class SERVER:
 
 		pr("Account doesnt exist")
 		if self.yn("Create account", pr=pr, inp=inp):
-			return self.create_new_account(pr=pr, inp=inp)
+			return self.create_new_account(pr=pr, inp=inp), dumps([])
 		else:
-			return False
+			return False, False
 
 	def start_server(self):
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
