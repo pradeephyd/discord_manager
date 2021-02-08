@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from time import sleep
 
 class MANAGER:
 	def open_web(self):
@@ -11,6 +12,7 @@ class MANAGER:
 		self.web = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
 	def load_cookies(self):
+		self.web.get("https://discord.com/")
 		for c in self.cookies:
 			self.web.add_cookie(c)
 
@@ -24,6 +26,7 @@ class MANAGER:
 		else:
 			self.load_cookies()
 			self.web.get("https://discord.com/channels/@me")
+		sleep(10)
 		self.save_cookies()
 
 		return self.profile_info, self.cookies
@@ -36,6 +39,7 @@ class MANAGER:
 		email_input.send_keys(self.email)
 		password_input.send_keys(self.password)
 		submit_input.click()
+
 
 	def __init__(self, profile_info, cookies):
 		self.profile_info = profile_info
