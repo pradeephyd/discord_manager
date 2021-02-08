@@ -43,11 +43,24 @@ class SEND_RECV:
 		self.conn.sendall(self.send_data_slip_decor_byte + d + self.send_data_slip_decor_byte)
 
 	def listen(self):
-		while self.recv_messages:
-			message = self.conn.recv(self.buffer)
-			while len(message.split(self.send_data_slip_decor_byte)) < 3:
-				message += self.conn.recv(self.buffer)
-			self.messages.append(message)
+		for i in range(self.max_tries):
+			while self.recv_messages:
+				try:
+					message = self.conn.recv(self.buffer)
+				except:
+					self.conn = False
+					break
+				while len(message.split(self.send_data_slip_decor_byte)) < 3:
+					message += self.conn.recv(self.buffer)
+				self.messages.append(message)
+			if not self.recv_messages:
+				break
+				return ""
+			if not self.connect():
+				print("Connection lost trying to connect... ({}/{})".format(i, self.max_tries))
+				sleep(1)
+			else:
+				print("Reconnected")
 
 	def recv(self):
 		while self.recv_messages:
@@ -73,9 +86,13 @@ class SEND_RECV:
 		if not self.conn:
 			self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			if self.host and self.port:
-
-				self.conn.connect((self.host, self.port))
-				self.start()
+				try:
+					self.conn.connect((self.host, self.port))
+				except:
+					return False
+				else:
+					if not self.listen_thread:
+						self.start()
 				return True
 			else:
 				print("Host and port needed to connect")
@@ -97,6 +114,7 @@ class SEND_RECV:
 		self.port = port
 		self.messages = []
 		self.delay = 0.01
+		self.max_tries = 15
 		self.recv_messages = True
 		self.buffer = buffer
 

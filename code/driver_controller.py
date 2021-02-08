@@ -48,16 +48,44 @@ class MANAGER:
 			return False
 
 	def go_to_chat(self, chat_name):
-		for c in self.get_chats():
+		for c in self.get_chats_elements():
 			if self.get_name_of_chat_element(c) == chat_name:
 				c.click()
 				return True
 		return False
 
-	def get_messages(self, channel):
-		return [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.web, 5).until(EC.visibility_of_all_elements_located((By.XPATH, self.chat_container_xpath)))]
+	def get_message_from_element(self, element):
+		try:
+			return element.find_element_by_css_selector(self.chat_message_content_css_selector).get_attribute('innerHTML')
+		except:
+			return False
 
-	def get_chats(self):
+	def get_messages_elements(self):
+		return self.web.find_elements_by_css_selector(self.chat_message_css_selector)
+
+	def get_messages(self):
+		messages = []
+		for c in self.get_messages_elements():
+			messages.append(self.get_message_from_element(c))
+		return messages
+
+	def new_messages_label(self):
+		if len(self.web.find_elements_by_css_selector(self.chat_new_messages_div_css_select)) > 2:
+			return True
+		else:
+			return False
+
+	def get_newest_message(self):
+		messages = self.get_messages()
+		return messages[len(messages)-1]
+
+	def get_new_messages(self):
+		if self.new_messages_label():
+			message = self.get_newest_message()
+			if message == "Hola":
+				self.send_message("Hola")
+
+	def get_chats_elements(self):
 		chats = []
 		for c in self.web.find_elements_by_css_selector(self.chat_container_css_selector):
 			if not self.get_name_of_chat_element(c) in self.trash_chats:
@@ -66,7 +94,7 @@ class MANAGER:
 
 	def get_chat_names(self):
 		names = []
-		for c in self.get_chats():
+		for c in self.get_chats_elements():
 			names.append(self.get_name_of_chat_element(c))
 		return names
 
@@ -98,14 +126,21 @@ class MANAGER:
 		#ccs selectors
 
 		#container of chats
-
 		self.chat_container_css_selector = '.layout-2DM8Md'
 
 
 		#name
-
 		self.chat_name_css_selector = '.overflow-WK9Ogt'
 
+
+		#new messages div
+		self.chat_new_messages_div_css_select = '.divider-3_HH5L'
+
+		#message
+		self.chat_message_css_selector = '.message-2qnXI6'
+
+		#message content
+		self.chat_message_content_css_selector = '.markup-2BOw-j'
 
 		#xpaths elements
 

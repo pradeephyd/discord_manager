@@ -31,6 +31,21 @@ class CONNECTION:
 					else:
 						if command == "send":
 							self.discord.send_message(self.inp("Message: "))
+						else:
+							if command == "pesado":
+								self.discord.go_to_chat("JNL500X")
+								while True:
+									self.discord.send_message(str(time.time()))
+									time.sleep(1)
+							else:
+								if command == "i":
+									self.discord.get_new_messages()
+								else:
+									if command == "messages":
+										self.pr(self.discord.get_messages())
+									else:
+										if command == "last_message":
+											self.pr(self.discord.get_newest_message())
 
 	def login(self):
 		self.username = self.inp("Username: ")
