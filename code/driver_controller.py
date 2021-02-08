@@ -26,7 +26,7 @@ class MANAGER:
 	def load_account(self):
 		if not self.logged:
 			self.login()
-			self.profile_info["discord"]["logged"] = True
+			self.profile_info["discord"]["logged"] = False
 		else:
 			self.load_cookies()
 			self.web.get("https://discord.com/channels/@me")
@@ -106,7 +106,12 @@ class MANAGER:
 
 	def get_newest_message(self):
 		messages = self.get_messages()
-		return messages[len(messages)-1]
+		try:
+			last = messages[len(messages)-1]
+		except:
+			return False
+		else:
+			return last
 
 	def answer(self):
 		log = [
@@ -120,11 +125,16 @@ class MANAGER:
 			if l[0] == message.lower():
 				self.send_message(l[1])
 				return message, l[1]
-		return False
+		reply = False
+		if not "Desconozco la frase" in message:
+			reply = "Desconozco la frase: ({})".format(message)
+			self.send_message(reply)
+		return message, reply
 
 	def bot_answer_chat(self):
 		if not self.check_remembered():
 			return self.answer()
+		return False, False
 
 	def get_chats_elements(self):
 		chats = []

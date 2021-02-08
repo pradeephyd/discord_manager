@@ -39,14 +39,19 @@ class CONNECTION:
 									time.sleep(1)
 							else:
 								if command == "i":
-									self.discord.bot_answer_chat()
+									question, answer = self.discord.bot_answer_chat()
+									self.pr("Question: {} \nAnswer: {}".format(question, answer))
 								else:
 									if command == "messages":
-										question, answer = self.discord.get_messages()
-										self.pr("Question: {} \nAnswer: {}".format(question, answer))
+										self.pr(self.discord.get_messages())
 									else:
 										if command == "last_message":
 											self.pr(self.discord.get_newest_message())
+										else:
+											if command == "auto":
+												while True:
+													question, answer = self.discord.bot_answer_chat()
+													self.pr("Question: {} \nAnswer: {}".format(question, answer))
 
 	def login(self):
 		self.username = self.inp("Username: ")
