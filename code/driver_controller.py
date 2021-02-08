@@ -2,6 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 class MANAGER:
 	def open_web(self):
@@ -31,6 +34,12 @@ class MANAGER:
 
 		return self.profile_info, self.cookies
 
+	def get_messages(self):
+		return [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.web, 5).until(EC.visibility_of_all_elements_located((By.XPATH, self.chat_container_xpath)))]
+
+	def get_chats(self):
+		return self.web.find_elements_by_css_selector(self.chat_container_css_selector)
+
 	def login(self):
 		self.web.get("https://discord.com/login")
 		email_input = self.web.find_element_by_xpath('//*[@id="app-mount"]/div[2]/div/div[2]/div/div/form/div/div/div[1]/div[3]/div[1]/div/div[2]/input')
@@ -48,3 +57,18 @@ class MANAGER:
 		self.email = self.profile_info["discord"]["email"]
 		self.password = self.profile_info["discord"]["password"]
 		self.web = False
+
+
+
+
+
+		#ccs selectors
+
+		#container of chats
+
+		self.chat_container_css_selector = '#private-channels > div'
+
+		#xpaths elements
+
+		#container of chats
+		self.chat_container_xpath = '//*[@id="private-channels"]/div'

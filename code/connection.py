@@ -20,6 +20,10 @@ class CONNECTION:
 
 			self.server.save_account(account_info, cookies)
 
+			for i in range(5):
+				self.discord.get_chats()[i].click()
+				time.sleep(3)
+
 	def login(self):
 		self.username = self.inp("Username: ")
 		self.password = self.inp("Password: ")

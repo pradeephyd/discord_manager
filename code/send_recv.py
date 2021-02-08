@@ -11,22 +11,22 @@ class SEND_RECV:
 		if not message:
 			message = ""
 
-		message = self.command_decor + command + message
+		message = self.command_decor + command + str(message)
 
 		if message1:
-			message += message1
+			message += str(message1)
 
 		if message2:
-			message += message2
+			message += str(message2)
 
 		if message3:
-			message += message3
+			message += str(message3)
 
 		if message4:
-			message += message4
+			message += str(message4)
 
 		if message5:
-			message += message5
+			message += str(message5)
 
 		self.send(message)
 
