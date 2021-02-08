@@ -39,10 +39,11 @@ class CONNECTION:
 									time.sleep(1)
 							else:
 								if command == "i":
-									self.discord.get_new_messages()
+									self.discord.bot_answer_chat()
 								else:
 									if command == "messages":
-										self.pr(self.discord.get_messages())
+										question, answer = self.discord.get_messages()
+										self.pr("Question: {} \nAnswer: {}".format(question, answer))
 									else:
 										if command == "last_message":
 											self.pr(self.discord.get_newest_message())

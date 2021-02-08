@@ -30,22 +30,54 @@ class MANAGER:
 		else:
 			self.load_cookies()
 			self.web.get("https://discord.com/channels/@me")
-		sleep(10)
+		sleep(2)
 		self.save_cookies()
 
 		return self.profile_info, self.cookies
 
 	def send_message(self, message):
-		input_ = self.web.find_element_by_xpath(self.chat_input)
-		input_.send_keys(message)
-		input_.send_keys(Keys.ENTER)
-
-
-	def get_name_of_chat_element(self, element):
 		try:
-			return element.find_element_by_css_selector(self.chat_name_css_selector).get_attribute('innerHTML')
+			input_ = self.web.find_element_by_xpath(self.chat_input)
+			input_.send_keys(message)
+			input_.send_keys(Keys.ENTER)
 		except:
 			return False
+		else:
+			return True
+
+	def check_remembered(self):
+		last = self.get_newest_message()
+		chat = self.get_name_of_current_chat()
+
+		remembered = False
+
+		for l in self.log:
+			if l == [last, chat]: 
+				remembered = True
+		if not remembered:
+			self.remember(last, chat)
+			return False
+		else:
+			return True
+
+	def remember(self, last=False, chat=False):
+		if not last:
+			last = self.get_newest_message()
+		if not chat:
+			chat = self.get_name_of_current_chat()
+		self.log.append([last, chat])
+
+	def get_inner(self, element, selector):
+		try:
+			return element.find_element_by_css_selector(selector).get_attribute('innerHTML')
+		except:
+			return False
+
+	def get_name_of_current_chat(self):
+		return self.get_inner(self.web, self.current_chat_name_css_selector)
+
+	def get_name_of_chat_element(self, element):
+		return self.get_inner(element, self.chat_name_css_selector)
 
 	def go_to_chat(self, chat_name):
 		for c in self.get_chats_elements():
@@ -55,10 +87,7 @@ class MANAGER:
 		return False
 
 	def get_message_from_element(self, element):
-		try:
-			return element.find_element_by_css_selector(self.chat_message_content_css_selector).get_attribute('innerHTML')
-		except:
-			return False
+		return self.get_inner(element, self.chat_message_content_css_selector)
 
 	def get_messages_elements(self):
 		return self.web.find_elements_by_css_selector(self.chat_message_css_selector)
@@ -79,11 +108,23 @@ class MANAGER:
 		messages = self.get_messages()
 		return messages[len(messages)-1]
 
-	def get_new_messages(self):
-		if self.new_messages_label():
-			message = self.get_newest_message()
-			if message == "Hola":
-				self.send_message("Hola")
+	def answer(self):
+		log = [
+		["hola", "hola"],
+		["que tal", "aqui, follandome a tu madre"],
+		["funny", "como tu madre"],
+		["ojoo", "ojete"]
+		]
+		message = self.get_newest_message()
+		for l in log:
+			if l[0] == message.lower():
+				self.send_message(l[1])
+				return message, l[1]
+		return False
+
+	def bot_answer_chat(self):
+		if not self.check_remembered():
+			return self.answer()
 
 	def get_chats_elements(self):
 		chats = []
@@ -117,6 +158,8 @@ class MANAGER:
 		self.password = self.profile_info["discord"]["password"]
 		self.web = False
 
+		self.log = []
+
 
 
 
@@ -133,6 +176,9 @@ class MANAGER:
 		self.chat_name_css_selector = '.overflow-WK9Ogt'
 
 
+		#name of the current chat
+		self.current_chat_name_css_selector = '.cursorPonter-YEp76E'
+
 		#new messages div
 		self.chat_new_messages_div_css_select = '.divider-3_HH5L'
 
@@ -141,6 +187,8 @@ class MANAGER:
 
 		#message content
 		self.chat_message_content_css_selector = '.markup-2BOw-j'
+
+
 
 		#xpaths elements
 

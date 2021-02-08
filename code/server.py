@@ -78,8 +78,9 @@ class SERVER:
 						return a, self.get_cookies()
 					else:
 						pr("Incorrect password")
-						password = input("Retry({}): ".format(i))
+						password = inp("Retry({}): ".format(i))
 				pr("Max tries try again later")
+				return False, False
 
 		pr("Account doesnt exist")
 		if self.yn("Create account", pr=pr, inp=inp):
