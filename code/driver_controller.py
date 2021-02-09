@@ -159,6 +159,23 @@ class MANAGER:
 		password_input.send_keys(self.password)
 		submit_input.click()
 
+  def load_elements_keys(self, keys):
+    self.chat_container_css_selector = keys["chat_container_css_selector"]
+    
+    self.chat_name_css_selector = keys["chat_name_css_selector"]
+    
+    self.current_chat_name_css_selector = keys["current_chat_name_css_selector"]
+    
+    self.chat_new_messages_div_css_select = keys["chat_new_messages_div_css_select"]
+    
+    self.chat_message_css_selector = keys["chat_message_css_selector"]
+    
+    self.chat_message_css_selector = keys["chat_message_css_selector"]
+
+    self.chat_container_xpath = keys["chat_container_xpath"]
+    
+    self.chat_input = keys["chat_input"]
+    
 
 	def __init__(self, profile_info, cookies):
 		self.profile_info = profile_info
@@ -196,7 +213,7 @@ class MANAGER:
 		self.chat_message_css_selector = '.message-2qnXI6'
 
 		#message content
-		self.chat_message_content_css_selector = '.markup-2BOw-j'
+		self.chat_message_css_selector = '.markup-2BOw-j'
 
 
 
