@@ -12,7 +12,7 @@ class CONNECTION:
 
 		if account_info:
 
-			self.discord = self.server.discord(account_info, cookies)
+			self.discord = self.server.discord(account_info, cookies, self.server.data.server["discord"]["keys"])
 
 			self.discord.open_web()
 

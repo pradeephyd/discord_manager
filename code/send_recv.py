@@ -56,11 +56,15 @@ class SEND_RECV:
 			if not self.recv_messages:
 				break
 				return ""
-			if not self.connect():
-				print("Connection lost trying to connect... ({}/{})".format(i, self.max_tries))
-				sleep(1)
+			if self.host and self.port: 
+				if not self.connect():
+					print("Connection lost trying to connect... ({}/{})".format(i, self.max_tries))
+					sleep(1)
+				else:
+					print("Reconnected")
 			else:
-				print("Reconnected")
+				print("Connection lost")
+				break
 
 	def recv(self):
 		while self.recv_messages:

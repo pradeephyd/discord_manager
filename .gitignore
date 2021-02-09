@@ -8,3 +8,5 @@ code/__pycache__/data.cpython-39.pyc
 data/cookies
 data/data.json
 code/__pycache__/driver_controller.cpython-39.pyc
+code/__pycache__/driver_controller.cpython-39.pyc
+*.pyc

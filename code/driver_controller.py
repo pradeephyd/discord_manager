@@ -159,69 +159,34 @@ class MANAGER:
 		password_input.send_keys(self.password)
 		submit_input.click()
 
-  def load_elements_keys(self, keys):
-    self.chat_container_css_selector = keys["chat_container_css_selector"]
-    
-    self.chat_name_css_selector = keys["chat_name_css_selector"]
-    
-    self.current_chat_name_css_selector = keys["current_chat_name_css_selector"]
-    
-    self.chat_new_messages_div_css_select = keys["chat_new_messages_div_css_select"]
-    
-    self.chat_message_css_selector = keys["chat_message_css_selector"]
-    
-    self.chat_message_css_selector = keys["chat_message_css_selector"]
+	def load_elements_keys(self, keys):
+		self.chat_container_css_selector = keys["chat_container_css_selector"]
 
-    self.chat_container_xpath = keys["chat_container_xpath"]
-    
-    self.chat_input = keys["chat_input"]
-    
+		self.chat_name_css_selector = keys["chat_name_css_selector"]
 
-	def __init__(self, profile_info, cookies):
+		self.current_chat_name_css_selector = keys["current_chat_name_css_selector"]
+
+		self.chat_new_messages_div_css_select = keys["chat_new_messages_div_css_select"]
+
+		self.chat_message_css_selector = keys["chat_message_css_selector"]
+
+		self.chat_message_content_css_selector = keys["chat_message_content_css_selector"]
+
+		self.chat_container_xpath = keys["chat_container_xpath"]
+
+		self.chat_input = keys["chat_input"]
+
+
+	def __init__(self, profile_info, cookies, keys):
 		self.profile_info = profile_info
 		self.logged = self.profile_info["discord"]["logged"]
 		self.cookies = cookies
 		self.email = self.profile_info["discord"]["email"]
 		self.password = self.profile_info["discord"]["password"]
 		self.web = False
-
+		self.keys = keys
 		self.log = []
-
-
-
 
 		self.trash_chats = ["Nitro", "Friends", False]
 
-
-		#ccs selectors
-
-		#container of chats
-		self.chat_container_css_selector = '.layout-2DM8Md'
-
-
-		#name
-		self.chat_name_css_selector = '.overflow-WK9Ogt'
-
-
-		#name of the current chat
-		self.current_chat_name_css_selector = '.cursorPonter-YEp76E'
-
-		#new messages div
-		self.chat_new_messages_div_css_select = '.divider-3_HH5L'
-
-		#message
-		self.chat_message_css_selector = '.message-2qnXI6'
-
-		#message content
-		self.chat_message_css_selector = '.markup-2BOw-j'
-
-
-
-		#xpaths elements
-
-		#container of chats
-		self.chat_container_xpath = '//*[@id="private-channels"]/div'
-
-		#input text
-
-		self.chat_input = '//*[@id="app-mount"]/div[2]/div/div[2]/div/div/div/div[2]/div[2]/div/main/form/div/div/div/div[3]/div[2]'
+		self.load_elements_keys(self.keys)

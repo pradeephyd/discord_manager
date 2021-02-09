@@ -5,7 +5,7 @@ class DATA:
 	def __init__(self):
 		self.folder = "data/"
 		self.file_server = "data.json"
-		self.file_server = "bot.json"
+		self.file_bot = "bot.json"
 		self.file_profiles = "profiles.json"
 		self.file_conf = "config.json"
 		self.file_cookies = "cookies"
