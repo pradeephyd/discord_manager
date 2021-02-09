@@ -27,9 +27,12 @@ class SERVER:
 		self.waiting = []
 		self.new_waiting = True
 
+	def save_bot_data(self, data):
+		self.data.bot = data
+		self.data.save()
+
 	def get_cookies(self):
 		return self.data.cookies
-
 
 	def save_cookies(self, cookies):
 		self.data.cookies = cookies

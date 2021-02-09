@@ -1,5 +1,6 @@
 import time
 from code.send_recv import *
+from code.bot import *
 
 class CONNECTION:
 	def get_account_info(self):
@@ -52,6 +53,10 @@ class CONNECTION:
 												while True:
 													question, answer = self.discord.bot_answer_chat()
 													self.pr("Question: {} \nAnswer: {}".format(question, answer))
+											else:
+												if command == "bot":
+													bot = BOT(self.server.data.bot, pr=self.discord.send_message, inp=self.discord.input_chat, save=self.server.save_bot_data)
+													bot.auto()
 
 	def login(self):
 		self.username = self.inp("Username: ")

@@ -43,10 +43,11 @@ class MANAGER:
 		except:
 			return False
 		else:
+			self.last_message_sent = message
 			return True
 
 	def check_remembered(self):
-		last = self.get_newest_message()
+		last = self.get_last_message()
 		chat = self.get_name_of_current_chat()
 
 		remembered = False
@@ -62,7 +63,7 @@ class MANAGER:
 
 	def remember(self, last=False, chat=False):
 		if not last:
-			last = self.get_newest_message()
+			last = self.get_last_message()
 		if not chat:
 			chat = self.get_name_of_current_chat()
 		self.log.append([last, chat])
@@ -104,14 +105,32 @@ class MANAGER:
 		else:
 			return False
 
-	def get_newest_message(self):
+	def get_last_message(self):
 		messages = self.get_messages()
 		try:
 			last = messages[len(messages)-1]
 		except:
 			return False
 		else:
-			return last
+			if not last == self.last_message_sent:
+				return last
+			else:
+				return False
+
+	def input_chat(self, message=False):
+		if message:
+			self.send_message(message)
+		reply = False
+		while not reply:
+			reply = self.get_new_message()
+			sleep(0.01)
+		return reply
+
+	def get_new_message(self):
+		if not self.check_remembered():
+			return self.get_last_message()
+		else:
+			return False
 
 	def answer(self):
 		log = [
@@ -120,7 +139,7 @@ class MANAGER:
 		["funny", "como tu madre"],
 		["ojoo", "ojete"]
 		]
-		message = self.get_newest_message()
+		message = self.get_last_message()
 		for l in log:
 			if l[0] == message.lower():
 				self.send_message(l[1])
@@ -148,7 +167,6 @@ class MANAGER:
 		for c in self.get_chats_elements():
 			names.append(self.get_name_of_chat_element(c))
 		return names
-
 
 	def login(self):
 		self.web.get("https://discord.com/login")
@@ -184,6 +202,7 @@ class MANAGER:
 		self.email = self.profile_info["discord"]["email"]
 		self.password = self.profile_info["discord"]["password"]
 		self.web = False
+		self.last_message_sent = ""
 		self.keys = keys
 		self.log = []
 
