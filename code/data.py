@@ -5,6 +5,7 @@ class DATA:
 	def __init__(self):
 		self.folder = "data/"
 		self.file_server = "data.json"
+		self.file_server = "bot.json"
 		self.file_profiles = "profiles.json"
 		self.file_conf = "config.json"
 		self.file_cookies = "cookies"
@@ -13,6 +14,7 @@ class DATA:
 		self.profiles = []
 		self.conf = {}
 		self.cookies = dumps([])
+		self.bot = []
 
 	def l(self, file_name, default, save, type="r", load_json=True):
 		try:
@@ -37,6 +39,9 @@ class DATA:
 	def load_server(self):
 		self.server = self.l(self.file_server, self.server, self.save_server)
 
+	def load_bot(self):
+		self.bot = self.l(self.file_bot, self.bot, self.save_bot)
+
 	def load_profiles(self):
 		self.profiles = self.l(self.file_profiles, self.profiles, self.save_profiles)
 
@@ -46,6 +51,7 @@ class DATA:
 	def load(self):
 		self.load_conf()
 		self.load_profiles()
+		self.load_bot()
 		self.load_server()
 		self.load_cookies()
 
@@ -63,6 +69,9 @@ class DATA:
 	def save_server(self):
 		self.s(self.file_server, self.server)
 
+	def save_bot(self):
+		self.s(self.file_bot, self.bot)
+
 	def save_profiles(self):
 		self.s(self.file_profiles, self.profiles)
 
@@ -72,5 +81,6 @@ class DATA:
 	def save(self):
 		self.save_conf()
 		self.save_profiles()
+		self.save_bot()
 		self.save_server()
 		self.save_cookies()
