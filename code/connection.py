@@ -33,30 +33,18 @@ class CONNECTION:
 						if command == "send":
 							self.discord.send_message(self.inp("Message: "))
 						else:
-							if command == "pesado":
-								self.discord.go_to_chat("JNL500X")
-								while True:
-									self.discord.send_message(str(time.time()))
-									time.sleep(1)
+							if command == "messages":
+								self.pr(self.discord.get_messages())
 							else:
-								if command == "i":
-									question, answer = self.discord.bot_answer_chat()
-									self.pr("Question: {} \nAnswer: {}".format(question, answer))
+								if command == "last_message":
+									self.pr(self.discord.get_last_message())
 								else:
-									if command == "messages":
-										self.pr(self.discord.get_messages())
+									if command == "bot":
+										bot = BOT(self.server.data.bot, pr=self.discord.send_message, inp=self.discord.input_chat, save=self.server.save_bot_data)
+										bot.auto()
 									else:
-										if command == "last_message":
-											self.pr(self.discord.get_newest_message())
-										else:
-											if command == "auto":
-												while True:
-													question, answer = self.discord.bot_answer_chat()
-													self.pr("Question: {} \nAnswer: {}".format(question, answer))
-											else:
-												if command == "bot":
-													bot = BOT(self.server.data.bot, pr=self.discord.send_message, inp=self.discord.input_chat, save=self.server.save_bot_data)
-													bot.auto()
+										if command == "input":
+											self.pr(self.discord.input_chat(self.inp("")))
 
 	def login(self):
 		self.username = self.inp("Username: ")

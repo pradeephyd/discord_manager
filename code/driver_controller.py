@@ -35,7 +35,87 @@ class MANAGER:
 
 		return self.profile_info, self.cookies
 
+
+
+
+
+
+
+	def get_inner(self, element, selector):
+		try:
+			return element.find_element_by_css_selector(selector).get_attribute('innerHTML')
+		except Exception as e:
+			print(e, element, selector)
+
+			return False
+
+	def get_message_from_element(self, element):
+		return self.get_inner(element, self.chat_message_content_css_selector)
+
+	def get_messages_elements(self):
+		return self.web.find_elements_by_css_selector(self.chat_message_css_selector)
+
+	def new_messages_label(self):
+		if len(self.web.find_elements_by_css_selector(self.chat_new_messages_div_css_select)) > 2:
+			return True
+		else:
+			return False
+
+	def get_name_of_current_chat(self):
+		return self.get_inner(self.web, self.current_chat_name_css_selector)
+
+
+	def get_name_of_chat_element(self, element):
+		return self.get_inner(element, self.chat_name_css_selector)
+
+
+	def get_name_of_chat_message_element(self, element):
+		return self.get_inner(element, self.message_chat_username_css_selector)
+
+
+
+
+	def check_remembered(self):
+		chat = self.get_name_of_current_chat()
+		last = self.get_last_message_element()
+		sender = self.get_name_of_chat_message_element(last)
+
+		remembered = False
+
+		try:
+			log = self.log[chat]
+		except:
+			self.remember(last, chat, sender)
+			return False
+		else:
+			if log == [sender, self.get_message_from_element(last)]:
+				return True
+			else:
+				self.remember(last, chat, sender)
+				return False
+
+	def remember(self, last=False, chat=False, sender=False):
+		if not last:
+			last = self.get_last_message_element()
+		if not sender:
+			sender = self.get_name_of_chat_message_element(last)
+		if not chat:
+			chat = self.get_name_of_current_chat()
+		print("Remember: ", last, chat, sender, "\n")
+		self.log[chat] = [sender, self.get_message_from_element(last)]
+
+
+
+
+
+
+
+
+
+
+
 	def send_message(self, message):
+		now = self.get_messages_elements()
 		try:
 			input_ = self.web.find_element_by_xpath(self.chat_input)
 			input_.send_keys(message)
@@ -43,42 +123,42 @@ class MANAGER:
 		except:
 			return False
 		else:
-			self.last_message_sent = message
+			self.remember()		
+			while not self.changed(now):
+				sleep(0.1)
+			sleep(2)
 			return True
 
-	def check_remembered(self):
-		last = self.get_last_message()
-		chat = self.get_name_of_current_chat()
 
-		remembered = False
 
-		for l in self.log:
-			if l == [last, chat]: 
-				remembered = True
-		if not remembered:
-			self.remember(last, chat)
-			return False
-		else:
-			return True
 
-	def remember(self, last=False, chat=False):
-		if not last:
-			last = self.get_last_message()
-		if not chat:
-			chat = self.get_name_of_current_chat()
-		self.log.append([last, chat])
 
-	def get_inner(self, element, selector):
-		try:
-			return element.find_element_by_css_selector(selector).get_attribute('innerHTML')
-		except:
-			return False
 
-	def get_name_of_current_chat(self):
-		return self.get_inner(self.web, self.current_chat_name_css_selector)
 
-	def get_name_of_chat_element(self, element):
-		return self.get_inner(element, self.chat_name_css_selector)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	def go_to_chat(self, chat_name):
 		for c in self.get_chats_elements():
@@ -87,11 +167,25 @@ class MANAGER:
 				return True
 		return False
 
-	def get_message_from_element(self, element):
-		return self.get_inner(element, self.chat_message_content_css_selector)
 
-	def get_messages_elements(self):
-		return self.web.find_elements_by_css_selector(self.chat_message_css_selector)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	def get_messages(self):
 		messages = []
@@ -99,32 +193,49 @@ class MANAGER:
 			messages.append(self.get_message_from_element(c))
 		return messages
 
-	def new_messages_label(self):
-		if len(self.web.find_elements_by_css_selector(self.chat_new_messages_div_css_select)) > 2:
+
+
+	def changed(self, messages):
+		now = self.get_messages_elements()
+		if not now == messages:
 			return True
 		else:
 			return False
 
-	def get_last_message(self):
-		messages = self.get_messages()
+
+
+
+
+	def get_last_message_element(self):
+		messages = self.get_messages_elements()
 		try:
-			last = messages[len(messages)-1]
+			last_element = messages[len(messages)-1]
 		except:
 			return False
 		else:
-			if not last == self.last_message_sent:
-				return last
-			else:
-				return False
+			return last_element
+
+	def get_last_message(self):
+		element = self.get_last_message_element()
+		if element:
+			return self.get_message_from_element(element)
+		else:
+			return False
+
+
+
 
 	def input_chat(self, message=False):
 		if message:
 			self.send_message(message)
 		reply = False
 		while not reply:
+			print(reply)
 			reply = self.get_new_message()
 			sleep(0.01)
 		return reply
+
+
 
 	def get_new_message(self):
 		if not self.check_remembered():
@@ -132,28 +243,25 @@ class MANAGER:
 		else:
 			return False
 
-	def answer(self):
-		log = [
-		["hola", "hola"],
-		["que tal", "aqui, follandome a tu madre"],
-		["funny", "como tu madre"],
-		["ojoo", "ojete"]
-		]
-		message = self.get_last_message()
-		for l in log:
-			if l[0] == message.lower():
-				self.send_message(l[1])
-				return message, l[1]
-		reply = False
-		if not "Desconozco la frase" in message:
-			reply = "Desconozco la frase: ({})".format(message)
-			self.send_message(reply)
-		return message, reply
 
-	def bot_answer_chat(self):
-		if not self.check_remembered():
-			return self.answer()
-		return False, False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	def get_chats_elements(self):
 		chats = []
@@ -194,6 +302,8 @@ class MANAGER:
 
 		self.chat_input = keys["chat_input"]
 
+		self.message_chat_username_css_selector = keys["message_chat_username_css_selector"]
+
 
 	def __init__(self, profile_info, cookies, keys):
 		self.profile_info = profile_info
@@ -202,9 +312,9 @@ class MANAGER:
 		self.email = self.profile_info["discord"]["email"]
 		self.password = self.profile_info["discord"]["password"]
 		self.web = False
-		self.last_message_sent = ""
+		self.messages_sent = []
 		self.keys = keys
-		self.log = []
+		self.log = {}
 
 		self.trash_chats = ["Nitro", "Friends", False]
 

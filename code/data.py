@@ -58,9 +58,7 @@ class DATA:
 	def s(self, file_name, data, type="w", code_json=True):
 		if code_json:
 			data = json.dumps(data)
-
-		print(self.folder, file_name, type, data)
-
+			
 		open(self.folder + file_name, type).write(data)
 
 	def save_cookies(self):
